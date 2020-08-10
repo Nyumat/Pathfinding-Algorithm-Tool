@@ -97,3 +97,22 @@ def draw_grid(win, rows, width):
     for i in range(rows):
         pygame.draw.line(win, GREY, (0, i * gap), (width, i * gap))
 
+def draw(win, grid, rows, width):
+	win.fill(WHITE)
+
+	for row in grid:
+		for Node in row:
+			Node.draw(win)
+
+	draw_grid(win, rows, width)
+	pygame.display.update()
+
+
+def get_clicked_pos(pos, rows, width):
+	gap = width // rows
+	y, x = pos
+
+	row = y // gap
+	col = x // gap
+
+	return row, col
