@@ -1,10 +1,23 @@
-### My Approach towards the Cliche Algorithm Visualization Tool *Everyone* seems to be doing as a side-project nowadays.
+# A* Pathfinding Visualization Tool [WIP]
 
+- The Maintainer of this Repository: Thomas or "Nyumat"
 
-This is the approach I took towards building an A* Visualization Script. 
-
- *Source Code Written in Python and Pygame. 
+## What the Tool is
  
-This specific version of the popular path search algorithm is implemented quite efficiently especially considering I self taught the algo through internet blogs.
-
-The code runs at the Debugging of the script, so feel free to try it out yourself. :p 
+ This tool is an interactive, easy to use visualization of the popular A* search algorithm. 
+ 
+ The tool uses the GUI and Keyboard Key access that comes with pygame and creates a plan where "nodes" are to be placed which are essentially points on a grid that, when the program is ran executes the algorithm and displays a optimal  path to the other node. 
+ 
+ This tool is written in Python with the GUI/Alogrithm being developed entirely using the pygame module. 
+ 
+ ## Features 
+ 
+ *some of these features aren't completely implemented yet, as you can see in the code* :/
+ 
+ - Unlimited placeable nodes
+ - Colorful GUI
+ - Grid Canvas
+ - Barriers
+ - One click execution usng pygame
+ 
+ ## The Algorithm
