@@ -79,7 +79,29 @@ def h(p1, p2):
     x2, y2 = p2
     return abs(x1 - x2) + abs(y1 - y2)
 
+# Object that will be used to draw the most optimal path from node to node.
+def reconstruct_path(came_from, current, draw):
+	while current in came_from:
+		current = came_from[current]
+		current.make_path()
+		draw()
 
+# A* Pathfinding Search
+# This algorithm is mostly new to me, so I will be implementing it a step at a time.
+# The first part of this is just me declaring functions to be used for later.
+def algorithm(draw, grid, start, end):
+	count = 0
+	open_set = PriorityQueue()
+	open_set.put((0, count, start))
+	came_from = {}
+	# Scores being used to represent the distances the nodes have to travel.
+	# With a higher score indicating distance, and lower score indicating closeness.
+	g_score = {Node: float("inf") for row in grid for Node in row}
+	g_score[start] = 0
+	f_score = {Node: float("inf") for row in grid for Node in row}
+	f_score[start] = h(start.get_pos(), end.get_pos())
+			
+		
 def make_grid(rows, width):
     grid = []
     gap = width // rows
@@ -90,7 +112,6 @@ def make_grid(rows, width):
             grid[i].append(node)
     
     return grid
-
 
 def draw_grid(win, rows, width):
     gap = width // rows
@@ -127,6 +148,22 @@ def main(win, width):
 	run = True
 	while run:
 		draw(win, grid, ROWS, width)
+		# More logic for the tool state/controls
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
+			if pygame.mouse.get_pressed()[0]: # LEFT 
+				pos = pygame.mouse.get_pos()
+				row, col = get_clicked_pos(pos, ROWS, width)
+				Node = grid[row][col]
+				if not start and Node != end:
+					start = Node
+					start.make_start()
+
+				elif not end and Node != start:
+					end = Node
+					end.make_end()
+
+				elif Node != end and Node != start:
+					Node.make_barrier() 
+	
