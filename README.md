@@ -54,4 +54,4 @@ For the technical nerds,
 
 ## License
 
-[MIT License](https://opensource.org/licenses/MIT)
+[MIT License](LICENSE.txt)
