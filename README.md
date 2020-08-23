@@ -18,7 +18,7 @@
  - Colorful GUI
  - Grid Canvas
  - Barriers
- - One click execution usng pygame
+ - One click execution using pygame
  
  ## The Algorithm
 
