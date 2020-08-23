@@ -28,7 +28,7 @@ The algorithm works by traversing the lowest-cost tree from the starting "node" 
 
 *It looks like this*
 
-![MDH](mdh.png)
+![MDH](astar/img/mdh.png)
 
 As you can see, the path that the search took was only within the constrains of non-diagonal grid movement. The search's goal is to find paths that are combination of straight line movements. 
 
