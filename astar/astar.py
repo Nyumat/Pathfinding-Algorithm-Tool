@@ -2,10 +2,6 @@ import pygame
 import math
 from queue import PriorityQueue
 
-WIDTH = 800
-WIN = pygame.display.set_mode((WIDTH, WIDTH))
-pygame.display.set_caption("Nyumat's A* Path Finding Algorithm Visualization Tool V1")
-
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 255, 0)
@@ -17,6 +13,7 @@ ORANGE = (255, 165 ,0)
 GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
 
+# Node class, which contains the object initizalizers and methods that will be used throughout the project.
 class Node:
 	def __init__(self, row, col, width, total_rows):
 		self.row = row
@@ -69,7 +66,8 @@ class Node:
 
 	def draw(self, win):
 		pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
-
+	# Manhattan Heuristic Implementation
+	# By using this Heuristic, we can only move along the grid in four directions. !Diagonally (up,down,left,right)
 	def update_neighbors(self, grid):
 		self.neighbors = []
 		if self.row < self.total_rows - 1 and not grid[self.row + 1][self.col].is_barrier(): # DOWN
@@ -93,7 +91,7 @@ def h(p1, p2):
 	x2, y2 = p2
 	return abs(x1 - x2) + abs(y1 - y2)
 
-
+# Creates path from node to node.
 def reconstruct_path(came_from, current, draw):
 	while current in came_from:
 		current = came_from[current]
@@ -106,7 +104,7 @@ def algorithm(draw, grid, start, end):
 	open_set = PriorityQueue()
 	open_set.put((0, count, start))
 	came_from = {}
-	# G score is the cost "so far" to rach node n, which is why it starts at 0.
+	# G score is the cost "so far" to reach node n, which is why it starts at 0.
 	g_score = {Node: float("inf") for row in grid for Node in row}
 	g_score[start] = 0
 	# F score will represent the total estimated cost of the path through the neighbors
@@ -125,10 +123,11 @@ def algorithm(draw, grid, start, end):
 			reconstruct_path(came_from, end, draw)
 			end.make_end()
 			return True
-		# Algo to evaluate the neighbor and simaltaneously search for the ending node
+		# Algo to iteratively evaluate the neighbor and simaltaneously search for the ending node
 		for neighbor in current.neighbors:
 			temp_g_score = g_score[current] + 1
-
+			# SEE README.md to understand this algorithm.
+			# To put it simply, it traces through each neighbor to find the end node.
 			if temp_g_score < g_score[neighbor]:
 				came_from[neighbor] = current
 				g_score[neighbor] = temp_g_score
@@ -228,8 +227,9 @@ def main(win, width):
 				if event.key == pygame.K_SPACE and start and end:
 					for row in grid:
 						for Node in row:
+							# Draw Path to the other node on run (space bar)
 							Node.update_neighbors(grid)
-
+					# Algorithm instance for pathfinding. 
 					algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
 
 				if event.key == pygame.K_c:
@@ -238,5 +238,9 @@ def main(win, width):
 					grid = make_grid(ROWS, width)
 
 	pygame.quit()
+	
+WIDTH = 800
+WIN = pygame.display.set_mode((WIDTH, WIDTH))
+pygame.display.set_caption("Nyumat's A* Path Finding Algorithm Visualization Tool V1")
 
 main(WIN, WIDTH)
