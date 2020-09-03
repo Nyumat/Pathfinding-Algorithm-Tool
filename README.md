@@ -1,4 +1,4 @@
-<p align="center">A* Pathfinding Visualization Tool [WIP]</p>
+<h1 align="center" style="font-size: 3rem;">A* Pathfinding Visualization Tool</h1>
 
 <b><p align="center">Made by @Nyumat</p></b>
 
