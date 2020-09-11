@@ -87,7 +87,7 @@ class Node:
 
 window_size = 600
 client = pygame.display.set_mode((window_size, window_size))
-pygame.display.set_caption("[Tom's Pathfinding Visual Tool V1] Made by Thomas Nyuma or @Nyumat")
+pygame.display.set_caption("[Thomas's Pathfinding Visualization Tool V1] Made by @Nyumat")
 
 def h(p1, p2):
 	x1, y1 = p1
