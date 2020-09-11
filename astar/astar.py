@@ -2,9 +2,10 @@ import pygame
 import math
 from queue import PriorityQueue
 
+# Colors
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
-BLUE = (0, 255, 0)
+BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -15,59 +16,59 @@ TURQUOISE = (64, 224, 208)
 
 # Node class, which contains the object initizalizers and methods that will be used throughout the project.
 class Node:
-	def __init__(self, row, col, width, total_rows):
+	def __init__(self, row, col, window_size, total_rows):
 		self.row = row
 		self.col = col
-		self.x = row * width
-		self.y = col * width
-		self.color = WHITE
+		self.x = row * window_size
+		self.y = col * window_size
+		self.color = BLACK
 		self.neighbors = []
-		self.width = width
+		self.window_size = window_size
 		self.total_rows = total_rows
 
 	def get_pos(self):
 		return self.row, self.col
 
 	def is_closed(self):
+		return self.color == TURQUOISE
+	def is_open(self):
 		return self.color == RED
 
-	def is_open(self):
-		return self.color == GREEN
-
 	def is_barrier(self):
-		return self.color == BLACK
+		return self.color == WHITE
 
 	def is_start(self):
 		return self.color == ORANGE
 
 	def is_end(self):
-		return self.color == TURQUOISE
+		return self.color == RED
 
 	def reset(self):
-		self.color = WHITE
+		self.color = BLACK
 
 	def make_start(self):
 		self.color = ORANGE
 
 	def make_closed(self):
-		self.color = RED
+		self.color = TURQUOISE
 
 	def make_open(self):
-		self.color = GREEN
+		self.color = RED
 
 	def make_barrier(self):
-		self.color = BLACK
+		self.color = WHITE
 
 	def make_end(self):
-		self.color = TURQUOISE
+		self.color = RED
 
 	def make_path(self):
 		self.color = PURPLE
 
-	def draw(self, win):
-		pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
+	def draw(self, client):
+		pygame.draw.rect(client, self.color, (self.x, self.y, self.window_size, self.window_size))
+  
 	# Manhattan Heuristic Implementation
-	# By using this Heuristic, we can only move along the grid in four directions. !Diagonally (up,down,left,right)
+	# By using this Heuristic, we can only move along the grid in four directions and not "Diagonally" (up,down,left,right)
 	def update_neighbors(self, grid):
 		self.neighbors = []
 		if self.row < self.total_rows - 1 and not grid[self.row + 1][self.col].is_barrier(): # DOWN
@@ -85,6 +86,9 @@ class Node:
 	def __lt__(self, other):
 		return False
 
+window_size = 600
+client = pygame.display.set_mode((window_size, window_size))
+pygame.display.set_caption("[Thomas's Pathfinding Visualization Tool V1] Made by @Nyumat")
 
 def h(p1, p2):
 	x1, y1 = p1
@@ -105,10 +109,10 @@ def algorithm(draw, grid, start, end):
 	open_set.put((0, count, start))
 	came_from = {}
 	# G score is the cost "so far" to reach node n, which is why it starts at 0.
-	g_score = {Node: float("inf") for row in grid for Node in row}
+	g_score = {node: float("inf") for row in grid for node in row}
 	g_score[start] = 0
 	# F score will represent the total estimated cost of the path through the neighbors
-	f_score = {Node: float("inf") for row in grid for Node in row}
+	f_score = {node: float("inf") for row in grid for node in row}
 	f_score[start] = h(start.get_pos(), end.get_pos())
 
 	open_set_hash = {start}
@@ -120,10 +124,12 @@ def algorithm(draw, grid, start, end):
 		current = open_set.get()[2]
 		open_set_hash.remove(current)
 		if current == end:
+			# Draw the optimal path once the search reaches the second placed node.
 			reconstruct_path(came_from, end, draw)
 			end.make_end()
+			start.make_start()
 			return True
-		# Algo to iteratively evaluate the neighbor and simaltaneously search for the ending node
+		# Algo to simultaneously evaluate the neighbor and search for the ending node in the open set
 		for neighbor in current.neighbors:
 			temp_g_score = g_score[current] + 1
 			# SEE README.md to understand this algorithm.
@@ -144,38 +150,37 @@ def algorithm(draw, grid, start, end):
 	return False
 
 # Function controls how our interface, or "grid" will be created.
-def make_grid(rows, width):
+def make_grid(rows, window_size):
 	grid = []
-	gap = width // rows
+	gap = window_size // rows
 	for i in range(rows):
 		grid.append([])
 		for j in range(rows):
-			Node = Node(i, j, gap, rows)
-			grid[i].append(Node)
+			node = Node(i, j, gap, rows)
+			grid[i].append(node)
 	return grid
 
 # Function draws the border and lines for the tool
-def draw_grid(win, rows, width):
-	gap = width // rows
+def draw_grid(client, rows, window_size):
+	gap = window_size // rows
 	for i in range(rows):
-		pygame.draw.line(win, GREY, (0, i * gap), (width, i * gap))
+		pygame.draw.line(client, GREY, (0, i * gap), (window_size, i * gap))
 		for j in range(rows):
-			pygame.draw.line(win, GREY, (j * gap, 0), (j * gap, width))
+			pygame.draw.line(client, GREY, (j * gap, 0), (j * gap, window_size))
 
 # Function that will draw the plane for the tool to be used in
-def draw(win, grid, rows, width):
-	win.fill(WHITE)
-
+def draw(client, grid, rows, window_size):
+	client.fill(BLACK)
 	for row in grid:
-		for Node in row:
-			Node.draw(win)
+		for node in row:
+			node.draw(client)
 
-	draw_grid(win, rows, width)
+	draw_grid(client, rows, window_size)
 	pygame.display.update()
 
 # Determines the part of the grid we're clicking so we can interact with it.
-def get_clicked_pos(pos, rows, width):
-	gap = width // rows
+def get_clicked_pos(pos, rows, window_size):
+	gap = window_size // rows
 	y, x = pos
 
 	row = y // gap
@@ -184,63 +189,61 @@ def get_clicked_pos(pos, rows, width):
 	return row, col
 
 # Main function  to hold all of the logic for the tool.
-def main(win, width):
-	ROWS = 50
-	grid = make_grid(ROWS, width)
+def main(client, window_size):
+	ROWS = 40
+	grid = make_grid(ROWS, window_size)
 
 	start = None
 	end = None
 
 	run = True
 	while run:
-		draw(win, grid, ROWS, width)
+		draw(client, grid, ROWS, window_size)
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
 			# Left click
 			if pygame.mouse.get_pressed()[0]: 
 				pos = pygame.mouse.get_pos()
-				row, col = get_clicked_pos(pos, ROWS, width)
-				Node = grid[row][col]
-				if not start and Node != end:
-					start = Node
+				row, col = get_clicked_pos(pos, ROWS, window_size)
+				node = grid[row][col]
+				if not start and node != end:
+					start = node
 					start.make_start()
 
-				elif not end and Node != start:
-					end = Node
+				elif not end and node != start:
+					end = node
 					end.make_end()
 
-				elif Node != end and Node != start:
-					Node.make_barrier()
+				elif node != end and node != start:
+					node.make_barrier()
 			# Right Click
 			elif pygame.mouse.get_pressed()[2]: 
 				pos = pygame.mouse.get_pos()
-				row, col = get_clicked_pos(pos, ROWS, width)
-				Node = grid[row][col]
-				Node.reset()
-				if Node == start:
+				row, col = get_clicked_pos(pos, ROWS, window_size)
+				node = grid[row][col]
+				node.reset()
+				if node == start:
 					start = None
-				elif Node == end:
+				elif node == end:
 					end = None
 
 			if event.type == pygame.KEYDOWN:
+				# Draw Path to the other node on run (space bar)
 				if event.key == pygame.K_SPACE and start and end:
 					for row in grid:
-						for Node in row:
-							# Draw Path to the other node on run (space bar)
-							Node.update_neighbors(grid)
-					# Algorithm instance for pathfinding. 
-					algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
+						for node in row:
+							node.update_neighbors(grid)
+					# Call algorithm object for pathfinding. 
+					algorithm(lambda: draw(client, grid, ROWS, window_size), grid, start, end)
 
-				if event.key == pygame.K_c:
+				if event.key == pygame.K_r:
 					start = None
 					end = None
-					grid = make_grid(ROWS, width)
+					grid = make_grid(ROWS, window_size)
 
 	pygame.quit()
 	
-WIDTH = 800
-WIN = pygame.display.set_mode((WIDTH, WIDTH))
-pygame.display.set_caption("Nyumat's A* Path Finding Algorithm Visualization Tool V1")
-
-main(WIN, WIDTH)
+if __name__ == "__main__":
+    main(client,window_size)
+    
