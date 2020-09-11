@@ -2,7 +2,7 @@ import pygame
 import math
 from queue import PriorityQueue
 
-# Colors
+# RGB Colors
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
@@ -31,8 +31,9 @@ class Node:
 
 	def is_closed(self):
 		return self.color == TURQUOISE
+  
 	def is_open(self):
-		return self.color == BLUE
+		return self.color == RED
 
 	def is_barrier(self):
 		return self.color == WHITE
@@ -51,8 +52,9 @@ class Node:
 
 	def make_closed(self):
 		self.color = TURQUOISE
+
 	def make_open(self):
-		self.color = BLUE
+		self.color = RED
 
 	def make_barrier(self):
 		self.color = WHITE
@@ -123,11 +125,12 @@ def algorithm(draw, grid, start, end):
 		current = open_set.get()[2]
 		open_set_hash.remove(current)
 		if current == end:
-			# Draw the optimal path
+			# Draw the optimal path once the search reaches the second placed node.
 			reconstruct_path(came_from, end, draw)
 			end.make_end()
+			start.make_start()
 			return True
-		# Algo to iteratively evaluate the neighbor and simaltaneously search for the ending node
+		# Algo to simultaneously evaluate the neighbor and search for the ending node in the open set
 		for neighbor in current.neighbors:
 			temp_g_score = g_score[current] + 1
 			# SEE README.md to understand this algorithm.
@@ -169,11 +172,10 @@ def draw_grid(client, rows, window_size):
 # Function that will draw the plane for the tool to be used in
 def draw(client, grid, rows, window_size):
 	client.fill(BLACK)
-
 	for row in grid:
 		for node in row:
 			node.draw(client)
-
+      
 	draw_grid(client, rows, window_size)
 	pygame.display.update()
 
@@ -187,7 +189,7 @@ def get_clicked_pos(pos, rows, window_size):
 
 	return row, col
 
-# Main function  to hold all of the logic for the tool.
+# Main function to hold a lot of the logic and controls.
 def main(client, window_size):
 	ROWS = 40
 	grid = make_grid(ROWS, window_size)
@@ -226,17 +228,18 @@ def main(client, window_size):
 					start = None
 				elif node == end:
 					end = None
-
+    
 			if event.type == pygame.KEYDOWN:
+				# Draw Path to the other node on run (space bar)
 				if event.key == pygame.K_SPACE and start and end:
 					for row in grid:
 						for node in row:
-							# Draw Path to the other node on run (space bar)
 							node.update_neighbors(grid)
-					# Call algorithm instance for pathfinding. 
+              
+					# Call algorithm object for pathfinding. 
 					algorithm(lambda: draw(client, grid, ROWS, window_size), grid, start, end)
 
-				if event.key == pygame.K_c:
+				if event.key == pygame.K_r:
 					start = None
 					end = None
 					grid = make_grid(ROWS, window_size)
