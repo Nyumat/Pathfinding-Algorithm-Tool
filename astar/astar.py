@@ -2,7 +2,7 @@ import pygame
 import math
 from queue import PriorityQueue
 
-# Colors
+# RGB Colors
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
@@ -31,6 +31,7 @@ class Node:
 
 	def is_closed(self):
 		return self.color == TURQUOISE
+  
 	def is_open(self):
 		return self.color == RED
 
@@ -174,7 +175,7 @@ def draw(client, grid, rows, window_size):
 	for row in grid:
 		for node in row:
 			node.draw(client)
-
+      
 	draw_grid(client, rows, window_size)
 	pygame.display.update()
 
@@ -188,7 +189,7 @@ def get_clicked_pos(pos, rows, window_size):
 
 	return row, col
 
-# Main function  to hold all of the logic for the tool.
+# Main function to hold a lot of the logic and controls.
 def main(client, window_size):
 	ROWS = 40
 	grid = make_grid(ROWS, window_size)
@@ -227,13 +228,14 @@ def main(client, window_size):
 					start = None
 				elif node == end:
 					end = None
-
+    
 			if event.type == pygame.KEYDOWN:
 				# Draw Path to the other node on run (space bar)
 				if event.key == pygame.K_SPACE and start and end:
 					for row in grid:
 						for node in row:
 							node.update_neighbors(grid)
+              
 					# Call algorithm object for pathfinding. 
 					algorithm(lambda: draw(client, grid, ROWS, window_size), grid, start, end)
 
