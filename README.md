@@ -104,6 +104,14 @@ For the technical nerds:
 
 - This was my first real Data Structure and Algorithms side project outside of leetcode. I struggled for countless hours trying to compute the logic for the algorithm, but nonetheless I've learned so much and it's honestly made me realize just how much I still have to learn. :smile:
 
+## To-Do's
+
+- [ ] Add elapsed time on spacebar event
+- [ ] Integrate a stack for infinite nodes
+- [ ] Change the priority queue instance to a smaller value
+- [ ] Add a GUI color selector prompt on each run of .exe
+- [ ] Implement a stop search feature 
+
 ## License
 
 [MIT License](LICENSE.txt)
