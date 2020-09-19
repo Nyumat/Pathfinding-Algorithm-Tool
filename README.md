@@ -106,9 +106,9 @@ For the technical nerds:
 
 ## To-Do's
 
-- [ ] Add elapsed time on spacebar event
+- [x] Add elapsed time on spacebar event
 - [ ] Integrate a stack for infinite nodes
-- [ ] Change the priority queue instance to a smaller value
+- [x] Change the priority queue instance to a smaller value
 - [ ] Add a GUI color selector prompt on each run of .exe
 - [ ] Implement a stop search feature 
 
